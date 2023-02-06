@@ -62,8 +62,12 @@ class BasicAuth(Auth):
         if decoded_base64_authorization_header:
             if isinstance(decoded_base64_authorization_header, str):
                 if ":" in decoded_base64_authorization_header:
-                    return tuple(
-                        decoded_base64_authorization_header.split(":")
+                    where = decoded_base64_authorization_header.find(":")
+                    email = decoded_base64_authorization_header[:where]
+                    password = decoded_base64_authorization_header[where+1:]
+                    print(email, password)
+                    return (
+                        email, password
                     )
         return (None, None)
 
