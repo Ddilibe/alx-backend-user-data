@@ -9,11 +9,11 @@ class Auth:
         Class to manage API authentication
     """
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-        """ 
+        """
             Method for the requirement of authentication
             Args:
-                :params: @path[str] - 
-                :params: @excluded_paths[List[str]] -
+                :params: @path[str] - First Argument
+                :params: @excluded_paths[List[str]] - Second argument
             Return:
                 True - @path is None
                 True - if @excluded_path is None
