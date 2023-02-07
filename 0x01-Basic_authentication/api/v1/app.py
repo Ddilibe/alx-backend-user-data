@@ -24,7 +24,7 @@ def before_request() -> str:
     """
     if auth:
         paths = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']
-        if auth.require_auth(request.path, path):
+        if auth.require_auth(request.path, paths):
             if auth.authorization_header(request):
                 abort(401)
                 return None
