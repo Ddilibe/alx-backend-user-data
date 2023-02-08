@@ -2,6 +2,7 @@
 """ Script containing the API authentication management """
 from typing import List, TypeVar
 from flask import request
+import os
 
 
 class Auth:
@@ -52,4 +53,17 @@ class Auth:
                 :params: @request[Flask] - Flask Object
             Return:
         """
+        return None
+
+    def session_cookie(self, request=None):
+        """
+            Method that returns a cookie value from a request
+            Args:
+                :params: @request[Flask_object] - First
+                argument
+            Return:
+        """
+        if request:
+            session_name = os.getenv("SESSION_NAME")
+            return request.cookies.get(session_name)
         return None
