@@ -25,3 +25,15 @@ class SessionAuth(Auth):
                 SessionAuth.user_id_by_session_id[key] = user_id
                 return key
         return None
+
+    def user_id_for_session_id(self, session_id: str = None) -> str:
+        """
+            Instance method that returns a user id based on Session ID
+            Args:
+                :params: session_id[str] - Session Arguments
+            Return:
+        """
+        if session_id:
+            if isinstance(session_id, str):
+                return SessionAuth.user_id_by_session_id.get(session_id)
+        return None
