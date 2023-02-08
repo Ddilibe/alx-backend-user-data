@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """ Script containing session authtication script """
 from api.v1.auth.auth import Auth
+from models.user import User
 from uuid import uuid4
 
 
@@ -36,4 +37,19 @@ class SessionAuth(Auth):
         if session_id:
             if isinstance(session_id, str):
                 return SessionAuth.user_id_by_session_id.get(session_id)
+        return None
+
+    def current_user(self, request=None):
+        """
+            Instance method that returns a user instance based on cookie
+            value
+            Args:
+                :params: @request[flask_object] - First Argument
+            Return:
+        """
+        cookie = self.session_cookie(request)
+        if cookie:
+            id = self.user_id_for_session_id(cookie)
+            if id:
+                return User.get(id)
         return None
