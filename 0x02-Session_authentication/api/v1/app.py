@@ -12,8 +12,7 @@ import os
 app = Flask(__name__)
 app.register_blueprint(app_views)
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
-auth = getenv("AUTH_TYPE", None)
-if auth:
+if auth := getenv("AUTH_TYPE", None):
     if auth == "basic_auth":
         from api.v1.auth.basic_auth import BasicAuth
         auth = BasicAuth()
@@ -29,18 +28,16 @@ if auth:
 def before_request() -> str:
     """ Method for handling all before request routes
     """
-    request.current_user = auth.current_user(request)
+    setattr(request, "current_user", auth.current_user(request))
     if auth:
         paths = ['/api/v1/status/', '/api/v1/unauthorized/',
                  '/api/v1/forbidden/', "/api/v1/auth_session/login/"]
         if auth.require_auth(request.path, paths):
-            if not auth.authorization_header(request):
-                if not auth.session_cookie(request):
-                    abort(401)
-                    return None
-                abort(401)
+            cookies = auth.session_cookie(request)
+            if not auth.authorization_header(request) and not cookies:
+                abort(401, description="Unauthorized")
             if not auth.current_user(request):
-                abort(403)
+                abort(403, description="Forbidden")
 
 
 @app.errorhandler(404)

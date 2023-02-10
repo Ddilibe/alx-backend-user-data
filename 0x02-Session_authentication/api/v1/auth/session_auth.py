@@ -23,7 +23,7 @@ class SessionAuth(Auth):
         if user_id:
             if isinstance(user_id, str):
                 key = str(uuid4())
-                SessionAuth.user_id_by_session_id[key] = user_id
+                self.user_id_by_session_id[key] = user_id
                 return key
         return None
 
@@ -36,7 +36,7 @@ class SessionAuth(Auth):
         """
         if session_id:
             if isinstance(session_id, str):
-                return SessionAuth.user_id_by_session_id.get(session_id)
+                return self.user_id_by_session_id.get(session_id)
         return None
 
     def current_user(self, request=None):
@@ -47,9 +47,23 @@ class SessionAuth(Auth):
                 :params: @request[flask_object] - First Argument
             Return:
         """
-        cookie = self.session_cookie(request)
-        if cookie:
-            id = self.user_id_for_session_id(cookie)
-            if id:
+        if cookie := self.session_cookie(request):
+            if id := self.user_id_for_session_id(cookie):
                 return User.get(id)
         return None
+
+    def destroy_session(self, request=None):
+        """
+            Instance method that deletes the user session and logs out
+            Args:
+                :params: @request[Flask_Object] - First Argument
+            Return:
+                True if logout successful and false if log out not
+                successful
+        """
+        if request:
+            if user := self.session_cookie(request):
+                if self.user_id_for_session_id(user):
+                    del self.user_id_by_session_id[user]
+                    return True
+        return False
