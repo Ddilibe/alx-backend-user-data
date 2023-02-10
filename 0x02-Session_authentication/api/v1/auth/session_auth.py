@@ -48,8 +48,8 @@ class SessionAuth(Auth):
             Return:
         """
         if cookie := self.session_cookie(request):
-            if id := self.user_id_for_session_id(cookie):
-                return User.get(id)
+            if idd := self.user_id_for_session_id(cookie):
+                return User.get(idd)
         return None
 
     def destroy_session(self, request=None):
