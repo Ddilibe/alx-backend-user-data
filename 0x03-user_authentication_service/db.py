@@ -43,10 +43,11 @@ class DB:
 
     def find_user_by(self, **kwargs):
         """ Method used to find user by the keyword arguments """
+        userall = self.__session.query(User).all()
         for key, value in kwargs.items():
-            if key not in User.__tables__.columns:
+            if key not in User.__table__.columns:
                 raise InvalidRequestError
-            name = User.__table__.columns.get(key)
-            userall = self.__session.query(User, name=value).first()
-            return userall
+            for i in userall:
+                if getattr(i, key) == value:
+                    return i
         raise NoResultFound
