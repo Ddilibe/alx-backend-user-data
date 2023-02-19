@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """DB module
 """
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, update
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
@@ -41,7 +41,7 @@ class DB:
         self.__session.commit()
         return new_user
 
-    def find_user_by(self, **kwargs):
+    def find_user_by(self, **kwargs) -> User:
         """ Method used to find user by the keyword arguments """
         userall = self.__session.query(User).all()
         for key, value in kwargs.items():
@@ -51,3 +51,12 @@ class DB:
                 if getattr(i, key) == value:
                     return i
         raise NoResultFound
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """ Method for updating user instance """
+        variable = {"id": user_id}
+        old_user = self.find_user_by(**variable)
+        string = update(User)
+        string = string.values(**kwargs)
+        string = string.where(old_user.id == user_id)
+        self.__session.execute(string)
